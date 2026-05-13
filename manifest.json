@@ -3,12 +3,14 @@
     "name": "UPass",
     "version": "1.0.0",
     "description": "UPass is a password manager that helps you securely store and manage your passwords.",
-    "permission": ["activeTab", "scripting", "storage"],
-    "action":{
-        "default_popup": "popup.html"
+    "permissions": ["activeTab", "scripting", "storage"],
+    "action": {
+        "default_popup": "scripts/popup.html"
     },
-    "content_scripts":{
-        "js": ["/scripts/content.js"],
-        "matches": ["<all_urls>"]
-    }
+    "content_scripts": [
+        {
+            "matches": ["<all_urls>"],
+            "js": ["scripts/content.js"]
+        }
+    ]
 }

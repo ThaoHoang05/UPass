@@ -1,0 +1,63 @@
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    width: 300px;
+    margin: 0;
+    padding: 20px;
+    background-color: #ffffff;
+    text-align: center;
+    color: #333333;
+}
+
+#content {
+    margin-bottom: 25px;
+}
+
+#ask-question {
+    font-size: 16px;
+    font-weight: 500;
+    margin: 0;
+    line-height: 1.4;
+}
+
+.btn {
+    display: flex;
+    justify-content: space-between;
+    gap: 15px;
+}
+
+.accept-btn, .reject-btn {
+    flex: 1;
+}
+
+button {
+    width: 100%;
+    border: none;
+    border-radius: 6px;
+    padding: 10px 15px;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+button:active {
+    transform: scale(0.96);
+}
+
+#accept {
+    background-color: #28a745;
+    color: #ffffff;
+}
+
+#accept:hover {
+    background-color: #218838;
+}
+
+#reject {
+    background-color: #dc3545;
+    color: #ffffff;
+}
+
+#reject:hover {
+    background-color: #c82333;
+}
