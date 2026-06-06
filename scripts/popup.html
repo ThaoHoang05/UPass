@@ -1,21 +1,79 @@
 <!DOCTYPE html>
 <html lang="vi">
-    <head>
-        <meta charset = "UTF-8">
-        <link rel="stylesheet" href="popup.css"/>
-    </head>
-    <body>
-        <div id = "content">
-            <p id="ask-question">Do you want to save account and password ?</p>
-        </div>
-        <div class = "btn">
-            <div class = "accept-btn">
-                <button id = "accept"><span>Accept</span></button>
-            </div>
-            <div class = "reject-btn">
-                <button id = "reject"><span>Reject</span></button>
-            </div>
-        </div>
-        <script src="popup.js"></script>
-    </body>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lưu mật khẩu</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap"
+    rel="stylesheet"
+  />
+  <link rel="stylesheet" href="popup.css" />
+</head>
+<body>
+  <div class="shell">
+
+    <!-- ── Success overlay ── -->
+    <div class="success-overlay" id="successOverlay">
+      <div class="success-icon">✅</div>
+      <div class="success-text" id="successText">Đã lưu mật khẩu</div>
+      <div class="success-sub" id="successSub"></div>
+    </div>
+
+    <!-- ── Header ── -->
+    <div class="header">
+      <div class="icon-wrap">🔑</div>
+      <div class="header-text">
+        <h1 id="headerTitle">Lưu mật khẩu?</h1>
+        <p id="headerSub">Tài khoản sẽ được lưu cục bộ trên máy bạn</p>
+      </div>
+      <button class="close-btn" id="btnSettings" title="Quản lý mật khẩu" style="margin-left: auto;">⚙️</button>
+      <button class="close-btn" id="btnClose" title="Đóng">✕</button>
+    </div>
+
+    <!-- ── Update badge ── -->
+    <div class="update-badge" id="updateBadge">
+      <div class="dot"></div>
+      <span>Mật khẩu thay đổi so với lần lưu trước</span>
+    </div>
+
+    <!-- ── Credential Card ── -->
+    <div class="cred-card" id="credCard">
+      <!-- Username row -->
+      <div class="cred-row">
+        <span class="cred-label">Tài khoản</span>
+        <span class="cred-value" id="displayUsername">—</span>
+      </div>
+
+      <!-- Password row -->
+      <div class="cred-row">
+        <span class="cred-label">Mật khẩu</span>
+        <span class="cred-value password" id="displayPassword">••••••••</span>
+        <button class="toggle-pwd" id="togglePwd" title="Hiện / ẩn mật khẩu">👁</button>
+      </div>
+
+      <!-- Site row -->
+      <div class="site-row">
+        <img class="favicon" id="favicon" src="" alt="" />
+        <span class="site-url" id="displaySite">—</span>
+      </div>
+    </div>
+
+    <!-- ── Actions ── -->
+    <div class="actions">
+      <button class="btn btn-dismiss" id="btnDismiss">Bỏ qua</button>
+      <button class="btn btn-save" id="btnSave">
+        <span class="spinner"></span>
+        <span class="btn-label">💾 Lưu mật khẩu</span>
+      </button>
+      <button class="btn btn-never" id="btnNever" title="Không hỏi lại cho trang này">
+        Không lưu
+      </button>
+    </div>
+
+  </div>
+
+  <script src="popup.js"></script>
+</body>
 </html>

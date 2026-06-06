@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>UPass - Trình quản lý mật khẩu</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="option.css">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="logo-area">
+        <span class="icon">🔑</span>
+        <div>
+          <h1>UPass Vault</h1>
+          <p>Danh sách tài khoản và mật khẩu đã lưu cục bộ trên thiết bị của bạn</p>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <div class="search-bar">
+        <input type="text" id="searchInp" placeholder="🔍 Tìm kiếm tài khoản, trang web...">
+      </div>
+
+      <div class="vault-table-container">
+        <table class="vault-table">
+          <thead>
+            <tr>
+              <th>Trang web</th>
+              <th>Tài khoản</th>
+              <th>Mật khẩu</th>
+              <th style="text-align: center; width: 100px;">Hành động</th>
+            </tr>
+          </thead>
+          <tbody id="vaultBody">
+            </tbody>
+        </table>
+        <div id="emptyState" class="empty-state" style="display: none;">
+          Không tìm thấy dữ liệu tài khoản nào được lưu.
+        </div>
+      </div>
+    </main>
+  </div>
+  <script src="option.js"></script>
+</body>
+</html>
