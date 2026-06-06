@@ -740,6 +740,50 @@
         }).catch((err) => sendResponse({ ok: false, error: err.message }));
         return true;
       }
+      case 'FILL_GENERATED_PWD': {
+        try {
+          // Dùng scanner để tìm, nếu không có fallback về querySelector cơ bản
+          const sr = typeof CredentialScanner !== 'undefined' ? CredentialScanner.scan() : {};
+          const pwdField = sr.bestPassword || document.querySelector('input[type="password"]');
+
+          if (pwdField) {
+            _setNativeValue(pwdField, msg.password);
+            // Nếu tìm thấy username field, focus lại vào password để kích hoạt UI event
+            pwdField.focus();
+            sendResponse({ ok: true });
+          } else {
+            sendResponse({ ok: false, error: 'Không tìm thấy trường mật khẩu trên trang.' });
+          }
+        } catch (err) {
+          sendResponse({ ok: false, error: err.message });
+        }
+        return true; // Bắt buộc cho async response
+      }
+
+      // Relay dữ liệu mật khẩu vừa tạo lên background để lưu
+      case 'SAVE_GENERATED_PWD': {
+        try {
+          const sr = typeof CredentialScanner !== 'undefined' ? CredentialScanner.scan() : {};
+          
+          // Cố gắng bắt username hiện tại trên form. Nếu rỗng, tạo một ID tạm thời.
+          const currentUsername = (sr.bestUsername && sr.bestUsername.value.trim()) 
+            ? sr.bestUsername.value.trim() 
+            : 'generated_' + Math.floor(Date.now() / 1000);
+
+          // Gửi thông điệp chứa data thô lên background
+          chrome.runtime.sendMessage({
+            type    : 'BACKGROUND_SAVE_GENERATED',
+            username: currentUsername,
+            password: msg.password,
+            url     : location.origin + location.pathname
+          }, (bgRes) => {
+            sendResponse(bgRes);
+          });
+        } catch (err) {
+          sendResponse({ ok: false, error: err.message });
+        }
+        return true; // Bắt buộc cho async response qua lại giữa 3 môi trường
+      }
     }
   });
 

@@ -6,506 +6,7 @@
 <title>Tạo mật khẩu</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500&display=swap" rel="stylesheet"/>
-<style>
-/* ── Reset ── */
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-/* ── Design tokens ── */
-:root {
-  --bg0        : #0a0a0f;
-  --bg1        : #111118;
-  --bg2        : #18181f;
-  --bg3        : #202028;
-  --border     : #2a2a35;
-  --border2    : #3a3a48;
-  --accent     : #00e5a0;
-  --accent2    : #00b87a;
-  --accent-dim : rgba(0,229,160,.1);
-  --accent-dim2: rgba(0,229,160,.06);
-  --text0      : #f0f0f5;
-  --text1      : #a0a0b8;
-  --text2      : #5a5a72;
-  --danger     : #ff4757;
-  --warn       : #ffa502;
-  --info       : #3b9eff;
-  --success    : #00e5a0;
-  --mono       : 'IBM Plex Mono', monospace;
-  --sans       : 'IBM Plex Sans', sans-serif;
-}
-
-html, body {
-  width: 380px;
-  min-height: 100px;
-  background: var(--bg0);
-  color: var(--text0);
-  font-family: var(--sans);
-  font-size: 13px;
-  line-height: 1.5;
-  -webkit-font-smoothing: antialiased;
-}
-
-/* ── Layout ── */
-.panel {
-  padding: 0;
-  display: flex;
-  flex-direction: column;
-}
-
-/* ── Header ── */
-.header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 14px 16px 12px;
-  border-bottom: 1px solid var(--border);
-  position: relative;
-}
-.header::after {
-  content: '';
-  position: absolute;
-  bottom: -1px;
-  left: 0;
-  width: 60px;
-  height: 1px;
-  background: var(--accent);
-}
-
-.header-left {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-.header-icon {
-  width: 28px;
-  height: 28px;
-  border: 1px solid var(--border2);
-  border-radius: 6px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 14px;
-  background: var(--bg2);
-}
-.header-title {
-  font-family: var(--mono);
-  font-size: 12px;
-  font-weight: 600;
-  letter-spacing: .06em;
-  color: var(--accent);
-  text-transform: uppercase;
-}
-.header-sub {
-  font-size: 11px;
-  color: var(--text2);
-  margin-top: 1px;
-}
-
-/* Mode toggle */
-.mode-toggle {
-  display: flex;
-  background: var(--bg2);
-  border: 1px solid var(--border);
-  border-radius: 6px;
-  padding: 2px;
-  gap: 2px;
-}
-.mode-btn {
-  padding: 4px 10px;
-  border-radius: 4px;
-  font-family: var(--mono);
-  font-size: 10px;
-  font-weight: 500;
-  letter-spacing: .04em;
-  cursor: pointer;
-  border: none;
-  background: transparent;
-  color: var(--text2);
-  transition: all .15s;
-}
-.mode-btn.active {
-  background: var(--bg3);
-  color: var(--accent);
-  border: 1px solid var(--border2);
-}
-
-/* ── Password Output ── */
-.output-section {
-  padding: 14px 16px;
-  border-bottom: 1px solid var(--border);
-}
-
-.output-box {
-  background: var(--bg1);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  padding: 12px 14px;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  min-height: 48px;
-  position: relative;
-  transition: border-color .2s;
-}
-.output-box:hover { border-color: var(--border2); }
-.output-box.copied { border-color: var(--accent); }
-
-.pwd-text {
-  font-family: var(--mono);
-  font-size: 13px;
-  font-weight: 500;
-  color: var(--text0);
-  flex: 1;
-  word-break: break-all;
-  line-height: 1.5;
-  letter-spacing: .02em;
-}
-.pwd-text.hidden { filter: blur(4px); user-select: none; }
-
-/* Colored chars */
-.ch-upper  { color: #7eb8f7; }
-.ch-lower  { color: var(--text0); }
-.ch-digit  { color: #ffd166; }
-.ch-symbol { color: var(--accent); }
-
-.output-actions {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  flex-shrink: 0;
-}
-
-.icon-btn {
-  width: 28px;
-  height: 28px;
-  border-radius: 5px;
-  border: 1px solid var(--border);
-  background: var(--bg2);
-  color: var(--text1);
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 13px;
-  transition: all .15s;
-}
-.icon-btn:hover { border-color: var(--border2); color: var(--text0); background: var(--bg3); }
-.icon-btn.active-copy { border-color: var(--accent); color: var(--accent); }
-
-/* Copy feedback */
-.copy-feedback {
-  position: absolute;
-  top: -28px;
-  right: 0;
-  background: var(--accent);
-  color: var(--bg0);
-  font-family: var(--mono);
-  font-size: 10px;
-  font-weight: 600;
-  padding: 3px 8px;
-  border-radius: 4px;
-  opacity: 0;
-  transform: translateY(4px);
-  transition: all .2s;
-  pointer-events: none;
-  white-space: nowrap;
-}
-.copy-feedback.show { opacity: 1; transform: translateY(0); }
-
-/* ── Strength Meter ── */
-.strength-row {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-top: 10px;
-}
-.strength-segs {
-  display: flex;
-  gap: 3px;
-  flex: 1;
-}
-.seg {
-  height: 3px;
-  flex: 1;
-  border-radius: 2px;
-  background: var(--border);
-  transition: background .3s, transform .2s;
-}
-.seg.active { transform: scaleY(1.5); }
-.seg.danger  { background: var(--danger); }
-.seg.warning { background: var(--warn); }
-.seg.info    { background: var(--info); }
-.seg.success { background: var(--success); }
-
-.strength-info {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  flex-shrink: 0;
-}
-.strength-label {
-  font-family: var(--mono);
-  font-size: 10px;
-  font-weight: 600;
-  letter-spacing: .05em;
-  min-width: 60px;
-  text-align: right;
-}
-.entropy-badge {
-  font-family: var(--mono);
-  font-size: 10px;
-  color: var(--text2);
-  background: var(--bg2);
-  border: 1px solid var(--border);
-  border-radius: 4px;
-  padding: 2px 6px;
-  white-space: nowrap;
-}
-.crack-time {
-  font-size: 11px;
-  color: var(--text2);
-  margin-top: 5px;
-  font-family: var(--mono);
-}
-
-/* ── Controls ── */
-.controls {
-  padding: 14px 16px;
-  border-bottom: 1px solid var(--border);
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-}
-
-/* Length slider */
-.ctrl-row {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-.ctrl-label {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-.ctrl-name {
-  font-size: 11px;
-  font-weight: 500;
-  color: var(--text1);
-  letter-spacing: .04em;
-  text-transform: uppercase;
-}
-.ctrl-value {
-  font-family: var(--mono);
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--accent);
-}
-
-input[type="range"] {
-  -webkit-appearance: none;
-  appearance: none;
-  width: 100%;
-  height: 3px;
-  background: var(--border2);
-  border-radius: 2px;
-  outline: none;
-  cursor: pointer;
-}
-input[type="range"]::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  width: 14px;
-  height: 14px;
-  border-radius: 50%;
-  background: var(--accent);
-  border: 2px solid var(--bg0);
-  cursor: pointer;
-  box-shadow: 0 0 0 3px var(--accent-dim);
-  transition: box-shadow .15s;
-}
-input[type="range"]::-webkit-slider-thumb:hover {
-  box-shadow: 0 0 0 5px var(--accent-dim);
-}
-
-/* Checkbox grid */
-.checkbox-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 6px;
-}
-.check-item {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 7px 10px;
-  border-radius: 6px;
-  border: 1px solid var(--border);
-  background: var(--bg1);
-  cursor: pointer;
-  transition: all .15s;
-  user-select: none;
-}
-.check-item:hover { border-color: var(--border2); background: var(--bg2); }
-.check-item.checked { border-color: var(--accent-dim2); background: var(--accent-dim2); }
-.check-item.checked .check-box { background: var(--accent); border-color: var(--accent); }
-.check-item.checked .check-box::after { opacity: 1; }
-
-.check-box {
-  width: 14px;
-  height: 14px;
-  border-radius: 3px;
-  border: 1px solid var(--border2);
-  flex-shrink: 0;
-  position: relative;
-  transition: all .15s;
-}
-.check-box::after {
-  content: '';
-  position: absolute;
-  left: 4px;
-  top: 2px;
-  width: 5px;
-  height: 7px;
-  border: 1.5px solid var(--bg0);
-  border-top: none;
-  border-left: none;
-  transform: rotate(45deg);
-  opacity: 0;
-  transition: opacity .1s;
-}
-
-.check-label {
-  font-family: var(--mono);
-  font-size: 11px;
-  font-weight: 500;
-  color: var(--text1);
-  flex: 1;
-}
-.check-preview {
-  font-family: var(--mono);
-  font-size: 10px;
-  color: var(--text2);
-}
-
-/* ── Passphrase extra controls ── */
-.passphrase-opts {
-  display: none;
-  flex-direction: column;
-  gap: 10px;
-}
-.passphrase-opts.visible { display: flex; }
-
-.separator-row {
-  display: flex;
-  gap: 6px;
-}
-.sep-btn {
-  padding: 5px 10px;
-  border-radius: 5px;
-  border: 1px solid var(--border);
-  background: var(--bg2);
-  color: var(--text1);
-  font-family: var(--mono);
-  font-size: 12px;
-  cursor: pointer;
-  transition: all .15s;
-}
-.sep-btn:hover { border-color: var(--border2); color: var(--text0); }
-.sep-btn.active { border-color: var(--accent); color: var(--accent); background: var(--accent-dim2); }
-
-/* ── Tips ── */
-.tips-section {
-  padding: 10px 16px;
-  border-bottom: 1px solid var(--border);
-  display: none;
-}
-.tips-section.visible { display: block; }
-.tips-title {
-  font-size: 10px;
-  font-weight: 500;
-  text-transform: uppercase;
-  letter-spacing: .06em;
-  color: var(--text2);
-  margin-bottom: 6px;
-}
-.tip-item {
-  font-size: 11px;
-  color: var(--text2);
-  padding: 3px 0;
-  display: flex;
-  align-items: flex-start;
-  gap: 6px;
-}
-.tip-item::before {
-  content: '→';
-  color: var(--warn);
-  flex-shrink: 0;
-  font-family: var(--mono);
-  font-size: 10px;
-  margin-top: 1px;
-}
-
-/* ── Actions ── */
-.actions {
-  padding: 12px 16px;
-  display: flex;
-  gap: 8px;
-}
-
-.btn {
-  flex: 1;
-  height: 36px;
-  border-radius: 6px;
-  font-family: var(--mono);
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: .05em;
-  cursor: pointer;
-  border: 1px solid var(--border2);
-  background: var(--bg2);
-  color: var(--text1);
-  transition: all .15s;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 5px;
-}
-.btn:hover { background: var(--bg3); color: var(--text0); border-color: var(--border2); }
-.btn:active { transform: scale(0.98); }
-
-.btn-primary {
-  background: var(--accent);
-  color: var(--bg0);
-  border-color: var(--accent);
-  font-weight: 700;
-}
-.btn-primary:hover { background: var(--accent2); border-color: var(--accent2); color: var(--bg0); }
-
-.btn-regen {
-  flex: 0 0 36px;
-  padding: 0;
-}
-
-/* ── Divider ── */
-.divider {
-  height: 1px;
-  background: var(--border);
-  margin: 0;
-}
-
-/* ── Fill feedback ── */
-.fill-status {
-  font-family: var(--mono);
-  font-size: 10px;
-  color: var(--text2);
-  text-align: center;
-  padding: 6px;
-  opacity: 0;
-  transition: opacity .3s;
-}
-.fill-status.show { opacity: 1; }
-.fill-status.ok { color: var(--success); }
-.fill-status.err { color: var(--danger); }
-</style>
+<link rel="stylesheet" href="generatorpanel.css"/>
 </head>
 <body>
 <div class="panel">
@@ -520,8 +21,8 @@ input[type="range"]::-webkit-slider-thumb:hover {
       </div>
     </div>
     <div class="mode-toggle">
-      <button class="mode-btn active" id="btn-mode-pwd" onclick="setMode('password')">RANDOM</button>
-      <button class="mode-btn" id="btn-mode-pp" onclick="setMode('passphrase')">PHRASE</button>
+      <button class="mode-btn active" id="btn-mode-pwd" data-mode="password">RANDOM</button>
+      <button class="mode-btn" id="btn-mode-pp" data-mode="passphrase">PHRASE</button>
     </div>
   </div>
 
@@ -531,8 +32,8 @@ input[type="range"]::-webkit-slider-thumb:hover {
       <div class="copy-feedback" id="copyFeedback">Đã copy!</div>
       <div class="pwd-text" id="pwdText">—</div>
       <div class="output-actions">
-        <button class="icon-btn" id="btnToggleVis" onclick="toggleVisibility()" title="Hiện/ẩn">👁</button>
-        <button class="icon-btn" id="btnCopy" onclick="copyPassword()" title="Copy">⎘</button>
+        <button class="icon-btn" id="btnToggleVis" title="Hiện/ẩn">👁</button>
+        <button class="icon-btn" id="btnCopy" title="Copy">⎘</button>
       </div>
     </div>
 
@@ -561,35 +62,34 @@ input[type="range"]::-webkit-slider-thumb:hover {
         <span class="ctrl-name">Độ dài</span>
         <span class="ctrl-value" id="lenVal">16</span>
       </div>
-      <input type="range" id="lengthSlider" min="8" max="64" step="1" value="16"
-             oninput="onLengthChange(this.value)"/>
+      <input type="range" id="lengthSlider" min="8" max="64" step="1" value="16"/>
     </div>
 
     <!-- Character types -->
     <div class="ctrl-row">
       <div class="ctrl-label"><span class="ctrl-name">Loại ký tự</span></div>
       <div class="checkbox-grid">
-        <div class="check-item checked" id="ck-upper" onclick="toggleCheck('upper')">
+        <div class="check-item checked" id="ck-upper">
           <div class="check-box"></div>
           <span class="check-label">Chữ hoa</span>
           <span class="check-preview" style="color:#7eb8f7">A-Z</span>
         </div>
-        <div class="check-item checked" id="ck-lower" onclick="toggleCheck('lower')">
+        <div class="check-item checked" id="ck-lower">
           <div class="check-box"></div>
           <span class="check-label">Chữ thường</span>
           <span class="check-preview">a-z</span>
         </div>
-        <div class="check-item checked" id="ck-digits" onclick="toggleCheck('digits')">
+        <div class="check-item checked" id="ck-digits">
           <div class="check-box"></div>
           <span class="check-label">Số</span>
           <span class="check-preview" style="color:#ffd166">0-9</span>
         </div>
-        <div class="check-item checked" id="ck-symbols" onclick="toggleCheck('symbols')">
+        <div class="check-item checked" id="ck-symbols">
           <div class="check-box"></div>
           <span class="check-label">Ký tự đặc biệt</span>
           <span class="check-preview" style="color:#00e5a0">!@#</span>
         </div>
-        <div class="check-item" id="ck-noambiguous" onclick="toggleCheck('noambiguous')" style="grid-column:1/-1">
+        <div class="check-item" id="ck-noambiguous" style="grid-column:1/-1">
           <div class="check-box"></div>
           <span class="check-label">Bỏ ký tự dễ nhầm (0/O/1/l/I)</span>
         </div>
@@ -605,30 +105,29 @@ input[type="range"]::-webkit-slider-thumb:hover {
         <span class="ctrl-name">Số từ</span>
         <span class="ctrl-value" id="wordCountVal">4</span>
       </div>
-      <input type="range" id="wordCountSlider" min="3" max="8" step="1" value="4"
-             oninput="onWordCountChange(this.value)"/>
+      <input type="range" id="wordCountSlider" min="3" max="8" step="1" value="4"/>
     </div>
 
     <!-- Separator -->
     <div class="ctrl-row">
       <div class="ctrl-label"><span class="ctrl-name">Dấu phân cách</span></div>
       <div class="separator-row">
-        <button class="sep-btn active" onclick="setSeparator('-')">dash -</button>
-        <button class="sep-btn" onclick="setSeparator('.')">dot .</button>
-        <button class="sep-btn" onclick="setSeparator('_')">underscore _</button>
-        <button class="sep-btn" onclick="setSeparator(' ')">space ·</button>
-        <button class="sep-btn" onclick="setSeparator('')">none</button>
+        <button class="sep-btn active" data-sep="-">dash -</button>
+        <button class="sep-btn" data-sep=".">dot .</button>
+        <button class="sep-btn" data-sep="_">underscore _</button>
+        <button class="sep-btn" data-sep=" ">space ·</button>
+        <button class="sep-btn" data-sep="">none</button>
       </div>
     </div>
 
     <!-- Extra options -->
     <div class="checkbox-grid">
-      <div class="check-item" id="ck-addnumber" onclick="togglePpOpt('addnumber')">
+      <div class="check-item" id="ck-addnumber">
         <div class="check-box"></div>
         <span class="check-label">Thêm số</span>
         <span class="check-preview" style="color:#ffd166">+42</span>
       </div>
-      <div class="check-item" id="ck-addsymbol" onclick="togglePpOpt('addsymbol')">
+      <div class="check-item" id="ck-addsymbol">
         <div class="check-box"></div>
         <span class="check-label">Thêm ký hiệu</span>
         <span class="check-preview" style="color:#00e5a0">+!</span>
@@ -644,9 +143,9 @@ input[type="range"]::-webkit-slider-thumb:hover {
 
   <!-- Actions -->
   <div class="actions">
-    <button class="btn btn-regen" onclick="regenerate()" title="Tạo mới">↻</button>
-    <button class="btn btn-primary" id="btnFill" onclick="fillForm()">⬇ Điền vào form</button>
-    <button class="btn" id="btnSave" onclick="savePassword()">💾 Lưu</button>
+    <button class="btn btn-regen" title="Tạo mới">↻</button>
+    <button class="btn btn-primary" id="btnFill">⬇ Điền vào form</button>
+    <button class="btn" id="btnSave">💾 Lưu</button>
   </div>
 
   <div class="fill-status" id="fillStatus"></div>
@@ -654,270 +153,6 @@ input[type="range"]::-webkit-slider-thumb:hover {
 </div>
 
 <script src="passwordGenerator.js"></script>
-<script>
-'use strict';
-
-/* ── State ── */
-const state = {
-  mode      : 'password',
-  password  : '',
-  visible   : false,
-  length    : 16,
-  useUpper  : true,
-  useLower  : true,
-  useDigits : true,
-  useSymbols: true,
-  noAmbiguous: false,
-  // passphrase
-  wordCount : 4,
-  separator : '-',
-  addNumber : false,
-  addSymbol : false,
-};
-
-/* ── DOM refs ── */
-const $ = id => document.getElementById(id);
-
-/* ── Init ── */
-document.addEventListener('DOMContentLoaded', () => {
-  regenerate();
-});
-
-/* ── Generate ── */
-function regenerate() {
-  try {
-    if (state.mode === 'password') {
-      state.password = PasswordGenerator.generatePassword({
-        length      : state.length,
-        useUpper    : state.useUpper,
-        useLower    : state.useLower,
-        useDigits   : state.useDigits,
-        useSymbols  : state.useSymbols,
-        noAmbiguous : state.noAmbiguous,
-      });
-    } else {
-      state.password = PasswordGenerator.generatePassphrase({
-        wordCount : state.wordCount,
-        separator : state.separator,
-        capitalize: true,
-        addNumber : state.addNumber,
-        addSymbol : state.addSymbol,
-      });
-    }
-    renderOutput();
-  } catch (e) {
-    showFillStatus('⚠ ' + e.message, 'err');
-  }
-}
-
-/* ── Render ── */
-function renderOutput() {
-  const result = PasswordGenerator.checkStrength(state.password);
-  renderPasswordText(state.password, state.visible);
-  renderStrength(result);
-  renderTips(result.tips);
-}
-
-function renderPasswordText(pwd, visible) {
-  const el = $('pwdText');
-  if (!visible) {
-    el.classList.add('hidden');
-    el.textContent = pwd;
-    return;
-  }
-  el.classList.remove('hidden');
-
-  // Tô màu từng loại ký tự
-  el.innerHTML = [...pwd].map(ch => {
-    if (/[A-Z]/.test(ch)) return `<span class="ch-upper">${escHtml(ch)}</span>`;
-    if (/[0-9]/.test(ch)) return `<span class="ch-digit">${escHtml(ch)}</span>`;
-    if (/[^a-zA-Z0-9]/.test(ch)) return `<span class="ch-symbol">${escHtml(ch)}</span>`;
-    return `<span class="ch-lower">${escHtml(ch)}</span>`;
-  }).join('');
-}
-
-function renderStrength(result) {
-  const colorMap = {
-    danger : '#ff4757',
-    warning: '#ffa502',
-    info   : '#3b9eff',
-    success: '#00e5a0',
-  };
-  const color = colorMap[result.color] || '#5a5a72';
-
-  // Segments
-  for (let i = 1; i <= 5; i++) {
-    const seg = $('seg' + i);
-    seg.className = 'seg';
-    if (i <= result.segments) {
-      seg.classList.add('active', result.color);
-    }
-  }
-
-  $('strengthLabel').textContent = result.label;
-  $('strengthLabel').style.color = color;
-  $('entropyBadge').textContent  = result.entropy + ' bit';
-  $('crackTime').textContent     = result.crackTime
-    ? `Thời gian crack: ${result.crackTime}`
-    : '';
-}
-
-function renderTips(tips) {
-  const sec = $('tipsSection');
-  const list = $('tipsList');
-  if (!tips || !tips.length) {
-    sec.classList.remove('visible');
-    return;
-  }
-  sec.classList.add('visible');
-  list.innerHTML = tips.map(t =>
-    `<div class="tip-item">${escHtml(t)}</div>`
-  ).join('');
-}
-
-/* ── Visibility toggle ── */
-function toggleVisibility() {
-  state.visible = !state.visible;
-  $('btnToggleVis').textContent = state.visible ? '🙈' : '👁';
-  renderPasswordText(state.password, state.visible);
-}
-
-/* ── Copy ── */
-async function copyPassword() {
-  const ok = await PasswordGenerator.copyToClipboard(state.password);
-  const btn = $('btnCopy');
-  const fb  = $('copyFeedback');
-  const box = $('outputBox');
-
-  if (ok) {
-    btn.classList.add('active-copy');
-    fb.classList.add('show');
-    box.classList.add('copied');
-    setTimeout(() => {
-      btn.classList.remove('active-copy');
-      fb.classList.remove('show');
-      box.classList.remove('copied');
-    }, 1800);
-  }
-}
-
-/* ── Mode switch ── */
-function setMode(mode) {
-  state.mode = mode;
-  $('btn-mode-pwd').classList.toggle('active', mode === 'password');
-  $('btn-mode-pp').classList.toggle('active', mode === 'passphrase');
-  $('pwdControls').style.display   = mode === 'password'   ? '' : 'none';
-  $('ppControls').classList.toggle('visible', mode === 'passphrase');
-  regenerate();
-}
-
-/* ── Length slider ── */
-function onLengthChange(val) {
-  state.length = parseInt(val);
-  $('lenVal').textContent = val;
-  regenerate();
-}
-
-/* ── Checkboxes (password mode) ── */
-const checkMap = {
-  upper     : 'useUpper',
-  lower     : 'useLower',
-  digits    : 'useDigits',
-  symbols   : 'useSymbols',
-  noambiguous: 'noAmbiguous',
-};
-
-function toggleCheck(key) {
-  const stateKey = checkMap[key];
-  state[stateKey] = !state[stateKey];
-  const el = $('ck-' + key);
-  el.classList.toggle('checked', state[stateKey]);
-  regenerate();
-}
-
-/* ── Passphrase options ── */
-function onWordCountChange(val) {
-  state.wordCount = parseInt(val);
-  $('wordCountVal').textContent = val;
-  regenerate();
-}
-
-let activeSepBtn = null;
-function setSeparator(sep) {
-  state.separator = sep;
-  // Update button styles
-  document.querySelectorAll('.sep-btn').forEach(btn => {
-    const btnSep = btn.textContent.split(' ').pop();
-    const matches =
-      (sep === '-' && btnSep === '-') ||
-      (sep === '.' && btnSep === '.') ||
-      (sep === '_' && btnSep === '_') ||
-      (sep === ' ' && btn.textContent.includes('space')) ||
-      (sep === '' && btn.textContent.includes('none'));
-    btn.classList.toggle('active', matches);
-  });
-  regenerate();
-}
-
-function togglePpOpt(key) {
-  const map = { addnumber: 'addNumber', addsymbol: 'addSymbol' };
-  const stateKey = map[key];
-  state[stateKey] = !state[stateKey];
-  $('ck-' + key).classList.toggle('checked', state[stateKey]);
-  regenerate();
-}
-
-/* ── Fill form ── */
-function fillForm() {
-  chrome.tabs.query({ active: true, currentWindow: true }, ([tab]) => {
-    if (!tab) { showFillStatus('Không tìm thấy tab', 'err'); return; }
-    chrome.tabs.sendMessage(tab.id, {
-      type    : 'FILL_GENERATED_PWD',
-      password: state.password,
-    }, (res) => {
-      if (chrome.runtime.lastError || !res?.ok) {
-        showFillStatus('⚠ Không tìm thấy password field', 'err');
-      } else {
-        showFillStatus('✓ Đã điền vào form', 'ok');
-      }
-    });
-  });
-}
-
-/* ── Save ── */
-function savePassword() {
-  chrome.tabs.query({ active: true, currentWindow: true }, ([tab]) => {
-    if (!tab) return;
-    chrome.tabs.sendMessage(tab.id, {
-      type    : 'SAVE_GENERATED_PWD',
-      password: state.password,
-    }, (res) => {
-      if (res?.ok) {
-        showFillStatus('✓ Đã lưu vào danh sách', 'ok');
-        $('btnSave').textContent = '✓ Đã lưu';
-        setTimeout(() => { $('btnSave').textContent = '💾 Lưu'; }, 2000);
-      } else {
-        showFillStatus('⚠ Lưu thất bại', 'err');
-      }
-    });
-  });
-}
-
-/* ── Fill status toast ── */
-function showFillStatus(msg, type) {
-  const el = $('fillStatus');
-  el.textContent = msg;
-  el.className = 'fill-status show ' + (type || '');
-  setTimeout(() => el.classList.remove('show'), 3000);
-}
-
-/* ── Escape HTML ── */
-function escHtml(str) {
-  return str
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;');
-}
-</script>
+<script src ="generatorpanel.js"></script>
 </body>
 </html>

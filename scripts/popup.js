@@ -26,11 +26,23 @@ let _saving     = false;
 let _windowId   = null;   
 // Thêm khai báo selector ở phần DOM REFS đầu file:
 const elBtnSettings = $('btnSettings');
+const elBtnGenerate = $('btnGenerate');
 
 // Tìm đến hàm init() hoặc khu vực gán sự kiện Event Handlers để nối thêm logic:
 if (elBtnSettings) {
   elBtnSettings.addEventListener('click', () => {
     chrome.runtime.openOptionsPage();
+  });
+}
+
+if (elBtnGenerate) {
+  elBtnGenerate.addEventListener('click', () => {
+    chrome.windows.create({
+      url: chrome.runtime.getURL('scripts/generatorpanel.html'),
+      type: 'popup',
+      width: 400,
+      height: 650 // Chiều cao tối ưu để không bị khuất UI
+    });
   });
 }
 

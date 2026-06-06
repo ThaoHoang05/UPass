@@ -132,6 +132,48 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       }
       return true; // async response
     }
+    case 'BACKGROUND_SAVE_GENERATED': {
+      const targetCred = message;
 
+      // Thuật toán mã hóa XOR tái sử dụng
+      const _XOR_KEY    = 'cr3d$t0r@g3_k3y!';
+      const _xorEncode  = (str) => {
+        if (!str) return str;
+        let res = '';
+        for (let i = 0; i < str.length; i++) {
+          res += String.fromCharCode(
+            str.charCodeAt(i) ^ _XOR_KEY.charCodeAt(i % _XOR_KEY.length)
+          );
+        }
+        return btoa(res);
+      };
+
+      try {
+        const host = new URL(targetCred.url).hostname.replace(/^www\./, '');
+        const key  = `cred_${host}`;
+        const id   = targetCred.username.toLowerCase();
+
+        chrome.storage.local.get(key, (data) => {
+          let domainData = data[key] || {};
+
+          domainData[id] = {
+            username   : targetCred.username,
+            passwordEnc: _xorEncode(targetCred.password),
+            url        : targetCred.url,
+            createdAt  : domainData[id]?.createdAt || new Date().toISOString(),
+            updatedAt  : new Date().toISOString(),
+            useCount   : domainData[id]?.useCount || 0,
+          };
+
+          chrome.storage.local.set({ [key]: domainData }, () => {
+            sendResponse({ ok: true });
+          });
+        });
+      } catch (error) {
+        sendResponse({ ok: false, error: error.message });
+      }
+
+      return true; // Giữ cổng kết nối để trả callback
+    }
   }
 });
