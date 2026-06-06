@@ -1,7 +1,7 @@
 {
     "manifest_version": 3,
     "name": "UPass",
-    "version": "1.0.0",
+    "version": "3.0.0",
     "description": "UPass is a password manager that helps you securely store and manage your passwords.",
     "permissions": ["activeTab", "scripting", "storage", "clipboardWrite"],
     "action": {
