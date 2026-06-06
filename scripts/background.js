@@ -3,6 +3,8 @@
 // Bộ nhớ đệm lưu trữ thông tin đăng nhập tạm thời theo từng Tab ID
 // Cấu trúc: { [tabId]: { username, password, url, isUpdate } }
 const pendingCredentials = {};
+let pendingAutofillCallback = null;
+let pendingAutofillData = null;
 
 // Lắng nghe tất cả các tín hiệu từ Content Script (quét form) và từ giao diện Popup gửi về
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
@@ -174,6 +176,62 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       }
 
       return true; // Giữ cổng kết nối để trả callback
+    }
+    case 'REQUEST_AUTOFILL_VERIFY': {
+      pendingAutofillCallback = sendResponse;
+      pendingAutofillData = message;
+
+      // Lấy thông tin cửa sổ Chrome hiện tại để tính toán tọa độ
+      chrome.windows.getCurrent((currentWindow) => {
+        // Bạn có thể tùy chỉnh kích thước ở đây cho vừa mắt
+        const popupWidth = 500;  
+        const popupHeight = 600; 
+
+        // Công thức tính vị trí trung tâm
+        const left = Math.round(currentWindow.left + (currentWindow.width / 2) - (popupWidth / 2));
+        const top = Math.round(currentWindow.top + (currentWindow.height / 2) - (popupHeight / 2));
+
+        // Mở cửa sổ popup với kích thước và vị trí mới
+        chrome.windows.create({
+          url: chrome.runtime.getURL('scripts/verify.html'),
+          type: 'popup',
+          width: popupWidth,
+          height: popupHeight,
+          left: left,
+          top: top,
+          focused: true
+        });
+      });
+
+      return true; // Bắt buộc giữ lại dòng này để không bị đứt kết nối
+    }
+  
+    case 'VERIFY_SUCCESS': {
+      // Khi file verify.js báo cáo xác thực thành công
+      if (pendingAutofillCallback && pendingAutofillData) {
+        
+        // Giải mã mật khẩu (Dùng lại hàm _xorDecode của bạn)
+        const _XOR_KEY = 'cr3d$t0r@g3_k3y!';
+        const plainPwd = atob(pendingAutofillData.passwordEnc).split('').map((char, i) => 
+            String.fromCharCode(char.charCodeAt(0) ^ _XOR_KEY.charCodeAt(i % _XOR_KEY.length))
+        ).join('');
+  
+        pendingAutofillCallback({ ok: true, password: plainPwd });
+        
+        // Reset state
+        pendingAutofillCallback = null;
+        pendingAutofillData = null;
+      }
+      sendResponse({ ok: true });
+      break;
+    }
+  
+    case 'VERIFY_FAILED': {
+      if (pendingAutofillCallback) pendingAutofillCallback({ ok: false });
+      pendingAutofillCallback = null;
+      pendingAutofillData = null;
+      sendResponse({ ok: true });
+      break;
     }
   }
 });

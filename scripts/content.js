@@ -489,13 +489,26 @@
       row.addEventListener('mousedown', (e) => {
         e.preventDefault(); // Không blur username field
         _dismissAutofillDropdown();
+        
+        //const plainPwd = _xorDecode(entry.passwordEnc);
+        //autofillFields(usernameEl, passwordEl, entry.username, plainPwd);
+        //storageIncrementUse(entry.username);
 
-        const plainPwd = _xorDecode(entry.passwordEnc);
-        autofillFields(usernameEl, passwordEl, entry.username, plainPwd);
-        storageIncrementUse(entry.username);
-
-        // Focus password field nếu có
-        if (passwordEl) setTimeout(() => passwordEl.focus(), 50);
+        chrome.runtime.sendMessage({
+          type: 'REQUEST_AUTOFILL_VERIFY',
+          username: entry.username,
+          passwordEnc: entry.passwordEnc // Chỉ gửi bản mã hóa
+        }, (response) => {
+          if (chrome.runtime.lastError || !response?.ok) {
+            _showToast('Xác thực thất bại hoặc bị hủy', 3000);
+            return;
+          }
+          // Nhận được mật khẩu thật sau khi xác thực thành công -> Điền vào form
+          autofillFields(usernameEl, passwordEl, entry.username, response.password);
+          storageIncrementUse(entry.username);
+          
+          if (passwordEl) setTimeout(() => passwordEl.focus(), 50);
+        });
       });
 
       dropdown.appendChild(row);

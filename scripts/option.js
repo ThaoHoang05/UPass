@@ -6,7 +6,12 @@ const getElements = () => ({
   elVaultBody: document.getElementById('vaultBody'),
   elSearchInp: document.getElementById('searchInp'),
   elEmptyState: document.getElementById('emptyState')
+
 });
+
+
+
+
 
 function init() {
   // 💡 THUẬT TOÁN GIẢI MÃ KHỚP VỚI BACKGROUND & CONTENT
