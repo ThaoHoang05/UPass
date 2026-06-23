@@ -496,3 +496,27 @@ input[type="range"]::-webkit-slider-thumb:hover {
 .fill-status.show { opacity: 1; }
 .fill-status.ok { color: var(--success); }
 .fill-status.err { color: var(--danger); }
+
+/* =========================================
+   1. Giao diện Sáng (Light Mode)
+   ========================================= */
+body.light-mode {
+  --bg0        : #f4f5f7;
+  --bg1        : #ffffff;
+  --bg2        : #e5e7eb;
+  --bg3        : #d1d5db;
+  --border     : #d1d5db;
+  --border2    : #9ca3af;
+  --text0      : #1a1a1a;
+  --text1      : #4b5563;
+  --text2      : #6b7280;
+  background-color: var(--bg0);
+  color: var(--text0);
+}
+
+/* =========================================
+   2. Cỡ chữ to (Large Text Mode)
+   ========================================= */
+body.large-text {
+  zoom: 1.15;
+}

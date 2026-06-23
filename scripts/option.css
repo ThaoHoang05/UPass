@@ -130,3 +130,30 @@ header p { color: var(--text-secondary); font-size: 14px; margin-top: 4px; }
 
 .actions-cell { display: flex; justify-content: center; }
 .empty-state { padding: 50px; text-align: center; color: var(--text-secondary); font-size: 14.5px; }
+
+/* =========================================
+   1. Giao diện Sáng (Light Mode)
+   ========================================= */
+body.light-mode {
+  --bg-base      : #f4f5f7;
+  --bg-card      : #ffffff;
+  --bg-hover     : #e5e7eb;
+  --border       : #d1d5db;
+  --text-primary : #1a1a1a;
+  --text-secondary: #4b5563;
+  --text-dim     : #6b7280;
+  background-color: var(--bg-base);
+  color: var(--text-primary);
+}
+
+body.light-mode .vault-table th {
+  background-color: var(--bg-hover);
+  color: var(--text-secondary);
+}
+
+/* =========================================
+   2. Cỡ chữ to (Large Text Mode)
+   ========================================= */
+body.large-text {
+  zoom: 1.15;
+}

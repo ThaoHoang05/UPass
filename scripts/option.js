@@ -215,4 +215,37 @@ document.addEventListener('DOMContentLoaded', () => {
   init();
 });
 
+document.addEventListener('DOMContentLoaded', () => {
+  const btnToggleTheme = document.getElementById('btnToggleTheme');
+  const btnToggleFontSize = document.getElementById('btnToggleFontSize');
+
+  // 1. Lấy trạng thái hiện tại từ storage khi mở trang
+  chrome.storage.local.get(['lightModeEnabled', 'largeTextEnabled'], (result) => {
+    // Xử lý Theme
+    if (result.lightModeEnabled) {
+      document.body.classList.add('light-mode');
+      btnToggleTheme.textContent = '🌙 Giao diện: Tối';
+    }
+    // Xử lý Cỡ chữ
+    if (result.largeTextEnabled) {
+      document.body.classList.add('large-text');
+      btnToggleFontSize.textContent = 'A- Cỡ chữ: Bình thường';
+    }
+  });
+
+  // 2. Lắng nghe sự kiện đổi Theme
+  btnToggleTheme.addEventListener('click', () => {
+    const isLightMode = document.body.classList.toggle('light-mode');
+    btnToggleTheme.textContent = isLightMode ? '🌙 Giao diện: Tối' : '🌞 Giao diện: Sáng';
+    chrome.storage.local.set({ lightModeEnabled: isLightMode });
+  });
+
+  // 3. Lắng nghe sự kiện đổi Cỡ chữ
+  btnToggleFontSize.addEventListener('click', () => {
+    const isLargeText = document.body.classList.toggle('large-text');
+    btnToggleFontSize.textContent = isLargeText ? 'A- Cỡ chữ: Bình thường' : 'A+ Cỡ chữ: To';
+    chrome.storage.local.set({ largeTextEnabled: isLargeText });
+  });
+});
+
 chrome.storage.local.get(null, (data) => console.log("Dữ liệu Options đọc được:", data));

@@ -246,3 +246,15 @@ function showFillStatus(msg, type) {
 function escHtml(str) {
   return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 }
+
+document.addEventListener('DOMContentLoaded', () => {
+  // Lấy 2 trạng thái độc lập từ Option
+  chrome.storage.local.get(['lightModeEnabled', 'largeTextEnabled'], (result) => {
+    if (result.lightModeEnabled) {
+      document.body.classList.add('light-mode');
+    }
+    if (result.largeTextEnabled) {
+      document.body.classList.add('large-text');
+    }
+  });
+});
